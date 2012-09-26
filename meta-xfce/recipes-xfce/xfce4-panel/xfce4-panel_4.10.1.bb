@@ -6,6 +6,7 @@ DEPENDS = "libxfce4util garcon libxfce4ui xfconf exo gtk+ dbus cairo virtual/lib
 
 inherit xfce
 
+SRC_URI += "file://0001-windowmenu-do-not-display-desktop-icon-when-no-windo.patch"
 SRC_URI[md5sum] = "8a1f8371fc725ba00f4594c5c0f81c59"
 SRC_URI[sha256sum] = "573052ed1b65e247415f92df120c8a78f9e4152c2636d38c923f82e32b8475d6"
 

@@ -8,6 +8,7 @@ inherit xfce gtk-doc
 
 SRC_URI[md5sum] = "5a333af704e386c90ad829b6baf1a758"
 SRC_URI[sha256sum] = "30920fc2e2fc26279a82b5261a155c2cc15ab2aa1ced2275684a6ff8261b97b0"
+SRC_URI += "file://0001-windowmenu-do-not-display-desktop-icon-when-no-windo.patch"
 
 EXTRA_OECONF += "--enable-gtk3"
 

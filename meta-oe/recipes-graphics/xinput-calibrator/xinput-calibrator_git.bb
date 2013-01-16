@@ -9,8 +9,11 @@ PR = "r1"
 
 inherit autotools
 
-SRCREV = "c01c5af807cb4b0157b882ab07a893df9a810111"
-SRC_URI = "git://github.com/tias/xinput_calibrator.git;protocol=git"
+SRCREV = "6ca429f54c523268e87c76395bbd2a822d7d04d3"
+SRC_URI = " \
+    git://github.com/tias/xinput_calibrator.git;protocol=git \
+    file://0001-Prevent-timeout-exit-when-no-timeout-is-used.patch \
+"
 
 S = "${WORKDIR}/git"
 

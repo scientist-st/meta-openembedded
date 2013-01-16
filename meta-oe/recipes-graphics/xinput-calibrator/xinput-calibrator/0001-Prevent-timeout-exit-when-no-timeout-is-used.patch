@@ -1,0 +1,82 @@
+From 5d404f02bfb9c6eabbbe93dea2a8eb7ed4fd07d6 Mon Sep 17 00:00:00 2001
+From: Jeff Lasslett <jeff.lasslett@gmail.com>
+Date: Wed, 9 Jan 2013 14:12:46 +1100
+Subject: [PATCH] Prevent timeout exit when --no-timeout is used
+
+Upstream-Status: Submitted [https://github.com/tias/xinput_calibrator/pull/45]
+
+---
+ src/gui/gtkmm.cpp |   30 ++++++++++++++++--------------
+ src/gui/x11.cpp   |   13 +++++++------
+ 2 files changed, 23 insertions(+), 20 deletions(-)
+
+diff --git a/src/gui/gtkmm.cpp b/src/gui/gtkmm.cpp
+index 32bb889..2f52e25 100644
+--- a/src/gui/gtkmm.cpp
++++ b/src/gui/gtkmm.cpp
+@@ -204,21 +204,23 @@ void CalibrationArea::redraw()
+ 
+ bool CalibrationArea::on_timer_signal()
+ {
+-    time_elapsed += time_step;
+-    if (time_elapsed > max_time) {
+-        exit(0);
+-    }
+-
+-    // Update clock
+-    Glib::RefPtr<Gdk::Window> win = get_window();
+-    if (win) {
+-        const Gdk::Rectangle rect(display_width/2 - clock_radius - clock_line_width,
+-                                 display_height/2 - clock_radius - clock_line_width,
+-                                 2 * clock_radius + 1 + 2 * clock_line_width,
+-                                 2 * clock_radius + 1 + 2 * clock_line_width);
+-        win->invalidate_rect(rect, false);
++    if (calibrator->get_use_timeout()) {
++        time_elapsed += time_step;
++        if (time_elapsed > max_time) {
++            exit(0);
++        }
++    
++        // Update clock
++        Glib::RefPtr<Gdk::Window> win = get_window();
++        if (win) {
++            const Gdk::Rectangle rect(display_width/2 - clock_radius - clock_line_width,
++                                     display_height/2 - clock_radius - clock_line_width,
++                                     2 * clock_radius + 1 + 2 * clock_line_width,
++                                     2 * clock_radius + 1 + 2 * clock_line_width);
++            win->invalidate_rect(rect, false);
++        }
+     }
+-
++    
+     return true;
+ }
+ 
+diff --git a/src/gui/x11.cpp b/src/gui/x11.cpp
+index db8a8a5..dfcd9fd 100644
+--- a/src/gui/x11.cpp
++++ b/src/gui/x11.cpp
+@@ -293,13 +293,14 @@ bool GuiCalibratorX11::on_expose_event()
+ 
+ bool GuiCalibratorX11::on_timer_signal()
+ {
+-    time_elapsed += time_step;
+-    if (time_elapsed > max_time) {
+-        exit(0);
+-    }
+-
+     // Update clock
+-    if(calibrator->get_use_timeout()){
++    if(calibrator->get_use_timeout()) {
++
++        time_elapsed += time_step;
++        if (time_elapsed > max_time) {
++            exit(0);
++        }
++
+         XSetForeground(display, gc, pixel[BLACK]);
+         XSetLineAttributes(display, gc, clock_line_width,
+                     LineSolid, CapButt, JoinMiter);
+-- 
+1.7.4.4
+

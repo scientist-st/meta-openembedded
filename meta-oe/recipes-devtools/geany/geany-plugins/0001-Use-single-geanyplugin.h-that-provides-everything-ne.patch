@@ -1,0 +1,62 @@
+From 307880c0778e27d191305ec6c68355af2512d1d4 Mon Sep 17 00:00:00 2001
+From: Matthew Brush <matt@geany.org>
+Date: Tue, 20 May 2014 20:29:01 -0700
+Subject: [PATCH] Use single <geanyplugin.h> that provides everything needed
+
+Upstream-Status: Backport [1]
+
+[1] https://github.com/geany/geany-plugins/commit/307880c0778e27d191305ec6c68355af2512d1d4
+---
+ geanylua/geanylua.c |  9 +--------
+ geanylua/glspi.h    | 15 +--------------
+ 2 files changed, 2 insertions(+), 22 deletions(-)
+
+diff --git a/geanylua/geanylua.c b/geanylua/geanylua.c
+index b0ddad0..1b6a5ba 100644
+--- a/geanylua/geanylua.c
++++ b/geanylua/geanylua.c
+@@ -35,14 +35,7 @@
+ #endif
+ 
+ 
+-#include "geany.h"
+-#include "plugindata.h"
+-#include "keybindings.h"
+-#include "ui_utils.h"
+-
+-#include "geanyfunctions.h"
+-
+-#include <glib/gi18n.h>
++#include <geanyplugin.h>
+ 
+ #include "glspi_ver.h"
+ 
+diff --git a/geanylua/glspi.h b/geanylua/glspi.h
+index 0de0044..43780b4 100644
+--- a/geanylua/glspi.h
++++ b/geanylua/glspi.h
+@@ -16,20 +16,7 @@
+ #include <string.h>
+ #include <ctype.h>
+ 
+-#include "geany.h"
+-#include "plugindata.h"
+-
+-#include "prefs.h"
+-#include "project.h"
+-#include "support.h"
+-#include "document.h"
+-#include "filetypes.h"
+-#include "keybindings.h"
+-#include "ui_utils.h"
+-#include "editor.h"
+-#include "templates.h"
+-
+-#include "geanyfunctions.h"
++#include <geanyplugin.h>
+ #define main_widgets	geany->main_widgets
+ 
+ #include "glspi_ver.h"
+-- 
+1.8.3.1
+

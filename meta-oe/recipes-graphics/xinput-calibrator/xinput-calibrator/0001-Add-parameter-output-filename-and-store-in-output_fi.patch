@@ -1,0 +1,246 @@
+From 6d79af03c09ba84ed718da5a3bb76f0bd5d13600 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andreas=20M=C3=BCller?= <schnitzeltony@googlemail.com>
+Date: Mon, 21 Jan 2013 12:31:12 +0100
+Subject: [PATCH 1/6] Add parameter --output-filename and store in
+ output_filename
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Andreas Müller <schnitzeltony@googlemail.com>
+---
+ src/calibrator.cpp                |    5 +++--
+ src/calibrator.hh                 |   10 +++++++++-
+ src/calibrator/Evdev.cpp          |   10 ++++++----
+ src/calibrator/Evdev.hpp          |    6 ++++--
+ src/calibrator/Usbtouchscreen.cpp |    4 ++--
+ src/calibrator/Usbtouchscreen.hpp |    2 +-
+ src/calibrator/XorgPrint.cpp      |    4 ++--
+ src/calibrator/XorgPrint.hpp      |    2 +-
+ src/main_common.cpp               |   16 +++++++++++++---
+ 9 files changed, 41 insertions(+), 18 deletions(-)
+
+diff --git a/src/calibrator.cpp b/src/calibrator.cpp
+index 403ae8e..ae5ea86 100644
+--- a/src/calibrator.cpp
++++ b/src/calibrator.cpp
+@@ -37,10 +37,11 @@ bool Calibrator::verbose = false;
+ Calibrator::Calibrator(const char* const device_name0, const XYinfo& axys0,
+     const int thr_misclick, const int thr_doubleclick,
+     const OutputType output_type0, const char* geometry0,
+-    const bool use_timeout0)
++    const bool use_timeout0, const char* output_filename0)
+ : device_name(device_name0),
+     threshold_doubleclick(thr_doubleclick), threshold_misclick(thr_misclick),
+-    output_type(output_type0), geometry(geometry0), use_timeout(use_timeout0)
++    output_type(output_type0), geometry(geometry0), use_timeout(use_timeout0),
++    output_filename(output_filename0)
+ {
+     old_axys = axys0;
+ 
+diff --git a/src/calibrator.hh b/src/calibrator.hh
+index 96cff2b..7d406b4 100644
+--- a/src/calibrator.hh
++++ b/src/calibrator.hh
+@@ -145,7 +145,8 @@ public:
+                const int thr_doubleclick=0,
+                const OutputType output_type=OUTYPE_AUTO,
+                const char* geometry=0,
+-               const bool use_timeout=1);
++               const bool use_timeout=1,
++               const char* output_filename = 0);
+ 
+     ~Calibrator() {}
+ 
+@@ -180,6 +181,10 @@ public:
+     const bool get_use_timeout() const
+     { return use_timeout; }
+ 
++    /// get output filename set at cmdline or NULL
++    const char* get_output_filename() const
++    { return output_filename; }
++
+ protected:
+     /// check whether the coordinates are along the respective axis
+     bool along_axis(int xy, int x0, int y0);
+@@ -230,6 +235,9 @@ protected:
+     const char* geometry;
+ 
+     const bool use_timeout;
++
++    // manually specified output filename
++    const char* output_filename;
+ };
+ 
+ // Interfance for a CalibratorTester
+diff --git a/src/calibrator/Evdev.cpp b/src/calibrator/Evdev.cpp
+index a370689..413e314 100644
+--- a/src/calibrator/Evdev.cpp
++++ b/src/calibrator/Evdev.cpp
+@@ -47,8 +47,9 @@ CalibratorEvdev::CalibratorEvdev(const char* const device_name0,
+                                  const int thr_doubleclick,
+                                  const OutputType output_type,
+                                  const char* geometry,
+-                                 const bool use_timeout)
+-  : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout)
++                                 const bool use_timeout,
++                                 const char* output_filename)
++  : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout, output_filename)
+ {
+     // init
+     display = XOpenDisplay(NULL);
+@@ -166,8 +167,9 @@ CalibratorEvdev::CalibratorEvdev(const char* const device_name0,
+                                  const int thr_doubleclick,
+                                  const OutputType output_type,
+                                  const char* geometry,
+-                                 const bool use_timeout)
+-  : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry) { }
++                                 const bool use_timeout,
++                                 const char* output_filename)
++  : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, output_filename) { }
+ 
+ // Destructor
+ CalibratorEvdev::~CalibratorEvdev () {
+diff --git a/src/calibrator/Evdev.hpp b/src/calibrator/Evdev.hpp
+index c586ba2..53e7277 100644
+--- a/src/calibrator/Evdev.hpp
++++ b/src/calibrator/Evdev.hpp
+@@ -47,7 +47,8 @@ protected:
+                     const int thr_doubleclick=0,
+                     const OutputType output_type=OUTYPE_AUTO,
+                     const char* geometry=0,
+-                    const bool use_timeout=false);
++                    const bool use_timeout=false,
++                    const char* output_filename = 0);
+ 
+ public:
+     CalibratorEvdev(const char* const device_name,
+@@ -57,7 +58,8 @@ public:
+                     const int thr_doubleclick=0,
+                     const OutputType output_type=OUTYPE_AUTO,
+                     const char* geometry=0,
+-                    const bool use_timeout=false);
++                    const bool use_timeout=false,
++                    const char* output_filename = 0);
+     ~CalibratorEvdev();
+ 
+     /// calculate and apply the calibration
+diff --git a/src/calibrator/Usbtouchscreen.cpp b/src/calibrator/Usbtouchscreen.cpp
+index c9fc20a..6ec71fd 100644
+--- a/src/calibrator/Usbtouchscreen.cpp
++++ b/src/calibrator/Usbtouchscreen.cpp
+@@ -48,8 +48,8 @@ static const char *p_flip_x = "flip_x";
+ static const char *p_flip_y = "flip_y";
+ static const char *p_swap_xy = "swap_xy";
+ 
+-CalibratorUsbtouchscreen::CalibratorUsbtouchscreen(const char* const device_name0, const XYinfo& axys0, const int thr_misclick, const int thr_doubleclick, const OutputType output_type, const char* geometry, const bool use_timeout)
+-  : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout)
++CalibratorUsbtouchscreen::CalibratorUsbtouchscreen(const char* const device_name0, const XYinfo& axys0, const int thr_misclick, const int thr_doubleclick, const OutputType output_type, const char* geometry, const bool use_timeout, const char* output_filename)
++  : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout, output_filename)
+ {
+     if (strcmp(device_name, "Usbtouchscreen") != 0)
+         throw WrongCalibratorException("Not a usbtouchscreen device");
+diff --git a/src/calibrator/Usbtouchscreen.hpp b/src/calibrator/Usbtouchscreen.hpp
+index 94473a3..4d84962 100644
+--- a/src/calibrator/Usbtouchscreen.hpp
++++ b/src/calibrator/Usbtouchscreen.hpp
+@@ -35,7 +35,7 @@ public:
+     CalibratorUsbtouchscreen(const char* const device_name, const XYinfo& axys,
+          const int thr_misclick=0, const int thr_doubleclick=0,
+         const OutputType output_type=OUTYPE_AUTO, const char* geometry=0,
+-        const bool use_timeout=false);
++        const bool use_timeout=false, const char* output_filename = 0);
+     ~CalibratorUsbtouchscreen();
+ 
+     virtual bool finish_data(const XYinfo new_axys);
+diff --git a/src/calibrator/XorgPrint.cpp b/src/calibrator/XorgPrint.cpp
+index 8e3a1b3..3dcb7ae 100644
+--- a/src/calibrator/XorgPrint.cpp
++++ b/src/calibrator/XorgPrint.cpp
+@@ -24,8 +24,8 @@
+ 
+ #include <cstdio>
+ 
+-CalibratorXorgPrint::CalibratorXorgPrint(const char* const device_name0, const XYinfo& axys0, const int thr_misclick, const int thr_doubleclick, const OutputType output_type, const char* geometry, const bool use_timeout)
+-  : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout)
++CalibratorXorgPrint::CalibratorXorgPrint(const char* const device_name0, const XYinfo& axys0, const int thr_misclick, const int thr_doubleclick, const OutputType output_type, const char* geometry, const bool use_timeout, const char* output_filename)
++  : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout, output_filename)
+ {
+     printf("Calibrating standard Xorg driver \"%s\"\n", device_name);
+     printf("\tcurrent calibration values: min_x=%d, max_x=%d and min_y=%d, max_y=%d\n",
+diff --git a/src/calibrator/XorgPrint.hpp b/src/calibrator/XorgPrint.hpp
+index 7afbd9f..0d7e4cf 100644
+--- a/src/calibrator/XorgPrint.hpp
++++ b/src/calibrator/XorgPrint.hpp
+@@ -35,7 +35,7 @@ public:
+     CalibratorXorgPrint(const char* const device_name, const XYinfo& axys,
+         const int thr_misclick=0, const int thr_doubleclick=0,
+         const OutputType output_type=OUTYPE_AUTO, const char* geometry=0,
+-        const bool use_timeout=false);
++        const bool use_timeout=false, const char* output_filename = 0);
+ 
+     virtual bool finish_data(const XYinfo new_axys);
+ 
+diff --git a/src/main_common.cpp b/src/main_common.cpp
+index f840e3d..efaa718 100644
+--- a/src/main_common.cpp
++++ b/src/main_common.cpp
+@@ -180,6 +180,7 @@ static void usage(char* cmd, unsigned thr_misclick)
+     fprintf(stderr, "\t--fake: emulate a fake device (for testing purposes)\n");
+     fprintf(stderr, "\t--geometry: manually provide the geometry (width and height) for the calibration window\n");
+     fprintf(stderr, "\t--no-timeout: turns off the timeout\n");
++    fprintf(stderr, "\t--output-filename: write calibration data to file (USB: override default /etc/modprobe.conf.local\n");
+ }
+ 
+ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
+@@ -191,6 +192,7 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
+     XYinfo pre_axys;
+     const char* pre_device = NULL;
+     const char* geometry = NULL;
++    const char* output_filename = NULL;
+     unsigned thr_misclick = 15;
+     unsigned thr_doubleclick = 7;
+     OutputType output_type = OUTYPE_AUTO;
+@@ -289,6 +291,11 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
+             // Disable timeout
+ 			if (strcmp("--no-timeout", argv[i]) == 0) {
+ 				use_timeout = false;
++			} else
++
++			// Output file
++			if (strcmp("--output-filename", argv[i]) == 0) {
++				output_filename = argv[++i];
+ 			}
+ 
+             // unknown option
+@@ -363,7 +370,8 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
+     try {
+         // try Usbtouchscreen driver
+         return new CalibratorUsbtouchscreen(device_name, device_axys,
+-            thr_misclick, thr_doubleclick, output_type, geometry, use_timeout);
++            thr_misclick, thr_doubleclick, output_type, geometry,
++            use_timeout, output_filename);
+ 
+     } catch(WrongCalibratorException& x) {
+         if (verbose)
+@@ -373,7 +381,8 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
+     try {
+         // next, try Evdev driver (with XID)
+         return new CalibratorEvdev(device_name, device_axys, device_id,
+-            thr_misclick, thr_doubleclick, output_type, geometry, use_timeout);
++            thr_misclick, thr_doubleclick, output_type, geometry,
++            use_timeout, output_filename);
+ 
+     } catch(WrongCalibratorException& x) {
+         if (verbose)
+@@ -382,5 +391,6 @@ Calibrator* Calibrator::make_calibrator(int argc, char** argv)
+ 
+     // lastly, presume a standard Xorg driver (evtouch, mutouch, ...)
+     return new CalibratorXorgPrint(device_name, device_axys,
+-            thr_misclick, thr_doubleclick, output_type, geometry, use_timeout);
++            thr_misclick, thr_doubleclick, output_type, geometry,
++            use_timeout, output_filename);
+ }
+-- 
+1.7.6.5
+

@@ -1,0 +1,75 @@
+From dd263d405a8ae109e1439c52dbabb55352d95bd0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andreas=20M=C3=BCller?= <schnitzeltony@googlemail.com>
+Date: Tue, 22 Jan 2013 08:35:20 +0100
+Subject: [PATCH 6/6] Set up buffer size for max line length only once in
+ calibrator.hh
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Andreas Müller <schnitzeltony@googlemail.com>
+---
+ src/calibrator.hh                 |    3 +++
+ src/calibrator/Evdev.cpp          |    3 ---
+ src/calibrator/Usbtouchscreen.cpp |    2 +-
+ src/calibrator/XorgPrint.cpp      |    3 ---
+ 4 files changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/src/calibrator.hh b/src/calibrator.hh
+index 3446b34..e497bb6 100644
+--- a/src/calibrator.hh
++++ b/src/calibrator.hh
+@@ -30,6 +30,9 @@
+ #include <stdio.h>
+ #include <vector>
+ 
++// XXX: we currently don't handle lines that are longer than this
++#define MAX_LINE_LEN 1024
++
+ int xf86ScaleAxis(int Cx, int to_max, int to_min, int from_max, int from_min);
+ float scaleAxis(float Cx, int to_max, int to_min, int from_max, int from_min);
+ 
+diff --git a/src/calibrator/Evdev.cpp b/src/calibrator/Evdev.cpp
+index 651cab9..9a56475 100644
+--- a/src/calibrator/Evdev.cpp
++++ b/src/calibrator/Evdev.cpp
+@@ -39,9 +39,6 @@
+ #define EXIT_FAILURE 0
+ #endif
+ 
+-// XXX: we currently don't handle lines that are longer than this
+-#define MAX_LINE_LEN 1024
+-
+ // Constructor
+ CalibratorEvdev::CalibratorEvdev(const char* const device_name0,
+                                  const XYinfo& axys0,
+diff --git a/src/calibrator/Usbtouchscreen.cpp b/src/calibrator/Usbtouchscreen.cpp
+index 2a1f09e..713b815 100644
+--- a/src/calibrator/Usbtouchscreen.cpp
++++ b/src/calibrator/Usbtouchscreen.cpp
+@@ -114,7 +114,7 @@ bool CalibratorUsbtouchscreen::finish_data(const XYinfo new_axys)
+     }
+ 
+     std::string new_contents;
+-    const int len = 1024; // XXX: we currently don't handle lines that are longer than this
++    const int len = MAX_LINE_LEN;
+     char line[len];
+     const char *opt = "options usbtouchscreen";
+     const int opt_len = strlen(opt);
+diff --git a/src/calibrator/XorgPrint.cpp b/src/calibrator/XorgPrint.cpp
+index c9c5c9f..582fa78 100644
+--- a/src/calibrator/XorgPrint.cpp
++++ b/src/calibrator/XorgPrint.cpp
+@@ -24,9 +24,6 @@
+ 
+ #include <cstdio>
+ 
+-// XXX: we currently don't handle lines that are longer than this
+-#define MAX_LINE_LEN 1024
+-
+ CalibratorXorgPrint::CalibratorXorgPrint(const char* const device_name0, const XYinfo& axys0, const int thr_misclick, const int thr_doubleclick, const OutputType output_type, const char* geometry, const bool use_timeout, const char* output_filename)
+   : Calibrator(device_name0, axys0, thr_misclick, thr_doubleclick, output_type, geometry, use_timeout, output_filename)
+ {
+-- 
+1.7.6.5
+

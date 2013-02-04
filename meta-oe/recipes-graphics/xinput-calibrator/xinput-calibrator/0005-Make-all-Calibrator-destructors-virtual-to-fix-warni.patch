@@ -1,0 +1,64 @@
+From 2846eade2601e92d34d40c603988a14dcb7634ac Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andreas=20M=C3=BCller?= <schnitzeltony@googlemail.com>
+Date: Mon, 21 Jan 2013 17:32:11 +0100
+Subject: [PATCH 5/6] Make all Calibrator* destructors virtual to fix warning
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+warning was:
+
+main_x11.cpp: In function 'int main(int, char**)':
+main_x11.cpp:42:12: warning: deleting object of abstract class type 'Calibrator' which has non-virtual destructor will cause undefined behaviour [-Wdelete-non-virtual-dtor]calibrator/Usbtouchscreen.cpp: In member function 'void CalibratorUsbtouchscreen::read_int_parameter(const char*, int&)':
+
+Upstream-Status: Submitted [https://github.com/tias/xinput_calibrator/pull/47]
+
+Signed-off-by: Andreas Müller <schnitzeltony@googlemail.com>
+---
+ src/calibrator.hh                 |    2 +-
+ src/calibrator/Evdev.hpp          |    2 +-
+ src/calibrator/Usbtouchscreen.hpp |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/calibrator.hh b/src/calibrator.hh
+index 7d406b4..3446b34 100644
+--- a/src/calibrator.hh
++++ b/src/calibrator.hh
+@@ -148,7 +148,7 @@ public:
+                const bool use_timeout=1,
+                const char* output_filename = 0);
+ 
+-    ~Calibrator() {}
++    virtual ~Calibrator() {}
+ 
+     /// set the doubleclick treshold
+     void set_threshold_doubleclick(int t)
+diff --git a/src/calibrator/Evdev.hpp b/src/calibrator/Evdev.hpp
+index 53e7277..b243090 100644
+--- a/src/calibrator/Evdev.hpp
++++ b/src/calibrator/Evdev.hpp
+@@ -60,7 +60,7 @@ public:
+                     const char* geometry=0,
+                     const bool use_timeout=false,
+                     const char* output_filename = 0);
+-    ~CalibratorEvdev();
++    virtual ~CalibratorEvdev();
+ 
+     /// calculate and apply the calibration
+     virtual bool finish(int width, int height);
+diff --git a/src/calibrator/Usbtouchscreen.hpp b/src/calibrator/Usbtouchscreen.hpp
+index 4d84962..287e5dd 100644
+--- a/src/calibrator/Usbtouchscreen.hpp
++++ b/src/calibrator/Usbtouchscreen.hpp
+@@ -36,7 +36,7 @@ public:
+          const int thr_misclick=0, const int thr_doubleclick=0,
+         const OutputType output_type=OUTYPE_AUTO, const char* geometry=0,
+         const bool use_timeout=false, const char* output_filename = 0);
+-    ~CalibratorUsbtouchscreen();
++    virtual ~CalibratorUsbtouchscreen();
+ 
+     virtual bool finish_data(const XYinfo new_axys);
+ 
+-- 
+1.7.6.5
+

@@ -1,0 +1,50 @@
+From fa47700129680bbd4fbb324dc1999b664dd4419a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andreas=20M=C3=BCller?= <schnitzeltony@googlemail.com>
+Date: Mon, 21 Jan 2013 16:37:35 +0100
+Subject: [PATCH 4/6] CalibratorUsbtouchscreen: overridde default file name
+ when setting --output-filename
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream-Status: Submitted [https://github.com/tias/xinput_calibrator/pull/47]
+
+Signed-off-by: Andreas Müller <schnitzeltony@googlemail.com>
+---
+ src/calibrator/Usbtouchscreen.cpp |   11 ++++++-----
+ 1 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/src/calibrator/Usbtouchscreen.cpp b/src/calibrator/Usbtouchscreen.cpp
+index 6ec71fd..2a1f09e 100644
+--- a/src/calibrator/Usbtouchscreen.cpp
++++ b/src/calibrator/Usbtouchscreen.cpp
+@@ -104,10 +104,11 @@ bool CalibratorUsbtouchscreen::finish_data(const XYinfo new_axys)
+     write_bool_parameter(p_swap_xy, new_axys.swap_xy);
+ 
+     // Read, then write calibration parameters to modprobe_conf_local,
+-    // to keep the for the next boot
+-    FILE *fid = fopen(modprobe_conf_local, "r");
++    // or the file set by --output-filename to keep the for the next boot
++    const char* filename = output_filename == NULL ? modprobe_conf_local : output_filename;
++    FILE *fid = fopen(filename, "r");
+     if (fid == NULL) {
+-        fprintf(stderr, "Error: Can't open '%s' for reading. Make sure you have the necessary rights\n", modprobe_conf_local);
++        fprintf(stderr, "Error: Can't open '%s' for reading. Make sure you have the necessary rights\n", filename);
+         fprintf(stderr, "New calibration data NOT saved\n");
+         return false;
+     }
+@@ -135,9 +136,9 @@ bool CalibratorUsbtouchscreen::finish_data(const XYinfo new_axys)
+          p_flip_y, yesno(flip_y), p_swap_xy, yesno(new_axys.swap_xy));
+     new_contents += new_opt;
+ 
+-    fid = fopen(modprobe_conf_local, "w");
++    fid = fopen(filename, "w");
+     if (fid == NULL) {
+-        fprintf(stderr, "Error: Can't open '%s' for writing. Make sure you have the necessary rights\n", modprobe_conf_local);
++        fprintf(stderr, "Error: Can't open '%s' for writing. Make sure you have the necessary rights\n", filename);
+         fprintf(stderr, "New calibration data NOT saved\n");
+         return false;
+     }
+-- 
+1.7.6.5
+

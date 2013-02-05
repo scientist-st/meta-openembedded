@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://src/calibrator.cpp;endline=22;md5=1bcba08f67cdb56f340
 DEPENDS = "virtual/libx11 libxi"
 
 PV = "0.7.5+git${SRCPV}"
-PR = "r4"
+PR = "r5"
 
 inherit autotools
 
@@ -57,4 +57,3 @@ do_install_append() {
 }
 
 FILES_${PN} += "${sysconfdir}/xdg/autostart ${systemd_unitdir}/system"
-RDEPENDS_${PN} = "xterm"

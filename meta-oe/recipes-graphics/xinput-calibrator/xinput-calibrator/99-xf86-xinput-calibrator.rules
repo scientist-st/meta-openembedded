@@ -1,0 +1,6 @@
+ACTION!="add", GOTO=xinput_calibrator_end
+
+SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{modalias}=="input:*-e0*,3,*a0,1,*18,*", TAG+="systemd", ENV{SYSTEMD_WANTS}="xinput-calibrator@%k.service"
+SUBSYSTEM=="input", KERNEL=="event[0-9]*", ATTRS{modalias}=="ads7846", TAG+="systemd", ENV{SYSTEMD_WANTS}="xinput-calibrator@%k.service"
+
+LABEL="xinput_calibrator_end"

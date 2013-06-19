@@ -59,7 +59,7 @@ do_install_append () {
 	install -d ${D}/etc/NetworkManager/VPN
 
 	# give all users access to change settings
-	install ${S}/org.freedesktop.NetworkManager.policy ${D}${datadir}/polkit-1/actions
+	install ${WORKDIR}/org.freedesktop.NetworkManager.policy ${D}${datadir}/polkit-1/actions
 }
 
 PACKAGES =+ "libnmutil libnmglib libnmglib-vpn ${PN}-tests" 

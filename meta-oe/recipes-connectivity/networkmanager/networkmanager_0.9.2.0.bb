@@ -4,7 +4,7 @@ SECTION = "net/misc"
 LICENSE = "GPLv2+"
 LIC_FILES_CHKSUM = "file://COPYING;md5=cbbffd568227ada506640fe950a4823b"
 
-PR = "r8"
+PR = "r9"
 
 DEPENDS = "libnl dbus dbus-glib udev wireless-tools polkit gnutls util-linux ppp"
 inherit gnome gettext
@@ -13,6 +13,7 @@ SRC_URI = "${GNOME_MIRROR}/NetworkManager/${@gnome_verdir("${PV}")}/NetworkManag
     file://0001-don-t-try-to-run-sbin-dhclient-to-get-the-version-nu.patch \
     file://0002-ppp-don-t-use-struct-ifpppstatsreq-that-was-removed-.patch \
     file://gtk-doc.make \
+    file://org.freedesktop.NetworkManager.policy \
 "
 SRC_URI[md5sum] = "bc0b00b8a187762d93c50a9706b4c5c3"
 SRC_URI[sha256sum] = "a178ed2f0b5a1045ec47b217ea531d0feba9208f6bcfe64b701174a5c1479816"
@@ -56,6 +57,9 @@ do_install_append () {
 	# Install an empty VPN folder as nm-connection-editor will happily segfault without it :o.
 	# With or without VPN support built in ;).
 	install -d ${D}/etc/NetworkManager/VPN
+
+	# give all users access to change settings
+	install ${S}/org.freedesktop.NetworkManager.policy ${D}${datadir}/polkit-1/actions
 }
 
 PACKAGES =+ "libnmutil libnmglib libnmglib-vpn ${PN}-tests" 

@@ -18,6 +18,7 @@ SRC_URI = "http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-${PV}.tar.g
            file://ntp.conf \
            file://ntpdate \
            file://ntpdate.default \
+           file://ntpd.list \
            "
 
 inherit autotools update-rc.d
@@ -52,6 +53,10 @@ do_install_append() {
 	install -m 644 ${WORKDIR}/ntpdate.default ${D}${sysconfdir}/default/ntpdate
 	install -d ${D}/${sysconfdir}/network/if-up.d
 	ln -s ${bindir}/ntpdate-sync ${D}/${sysconfdir}/network/if-up.d
+
+	# see http://www.freedesktop.org/wiki/Software/systemd/timedated/
+	install -d ${D}${libdir}/systemd/ntp-units.d
+	install -m 0644 ${WORKDIR}/ntpd.list ${D}${libdir}/systemd/ntp-units.d/60-ntpd.list
 }
 
 PACKAGES += "ntpdate ${PN}-tickadj ${PN}-utils"

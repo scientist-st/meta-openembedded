@@ -27,19 +27,23 @@ SRC_URI[sha256sum] = "02ae544547211b687818c97bcbf19bf6b8b5be7fda93000525a8765c7b
 
 EXTRA_OECONF = "--with-os-type=moblin --disable-man-pages --disable-introspection"
 
-do_install_append() {
-    # see configure.log for more details
-    chown root:root ${D}${libdir}/${BPN}-1/polkit-agent-helper-1
-    chmod 4755 ${D}${libdir}/${BPN}-1/polkit-agent-helper-1
+pkg_postinst_${PN}_append () {
+# opkg does not set ownerships/permissions correcly so do that at first start/update
+if [ "x$D" != "x" ]; then
+    exit 1
+fi
+# see configure.log for more details
+chown root:root ${libdir}/${BPN}-1/polkit-agent-helper-1
+chmod 4755 ${libdir}/${BPN}-1/polkit-agent-helper-1
 
-    chown root:root ${D}${bindir}/pkexec
-    chmod 4755 ${D}${bindir}/pkexec
+chown root:root ${bindir}/pkexec
+chmod 4755 ${bindir}/pkexec
 
-    chown polkitd:polkitd ${D}${sysconfdir}/${BPN}-1/rules.d
-    chmod 700 ${D}${sysconfdir}/${BPN}-1/rules.d
+chown polkitd:polkitd ${sysconfdir}/${BPN}-1/rules.d
+chmod 700 ${sysconfdir}/${BPN}-1/rules.d
 
-    chown polkitd:polkitd ${D}${datadir}/${BPN}-1/rules.d
-    chmod 700 ${D}${datadir}/${BPN}-1/rules.d
+chown polkitd:polkitd ${datadir}/${BPN}-1/rules.d
+chmod 700 ${datadir}/${BPN}-1/rules.d
 }
 
 PACKAGES =+ "${PN}-examples"

@@ -33,6 +33,7 @@ SRCREV = "decd634e801bee2c554edb35383cc9d43417a850"
 SRC_URI = "git://anongit.freedesktop.org/systemd/systemd;protocol=git \
            file://0001-Revert-systemd-analyze-use-argparse-instead-of-getop.patch \
            file://0002-Revert-analyze-use-GDBus-instead-of-dbus-python.patch \
+           file://0003-timedated-add-CanNTP-property.patch \
            file://gtk-doc.make \
            file://touchscreen.rules \
            file://modprobe.rules \

@@ -14,7 +14,7 @@ fi
 systemctl $OPTS ${SYSTEMD_AUTO_ENABLE} ${SYSTEMD_SERVICE}
 
 if [ -z "$D" -a ${SYSTEMD_AUTO_ENABLE} = "enable" ]; then
-    systemctl start ${SYSTEMD_SERVICE}
+    systemctl restart ${SYSTEMD_SERVICE}
 fi
 }
 

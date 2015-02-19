@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = " \
     file://COPYING.LIB;md5=4fbd65380cdd255951079008b364516c \
 "
 
-DEPENDS = "glib-2.0"
+DEPENDS = "glib-2.0 udev"
 
 inherit autotools pkgconfig
 

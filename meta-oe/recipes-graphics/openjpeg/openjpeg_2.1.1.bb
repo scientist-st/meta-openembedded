@@ -17,3 +17,5 @@ EXTRA_OECMAKE += "-DOPENJPEG_INSTALL_PACKAGE_DIR=${baselib}/cmake \
                   -DOPENJPEG_INSTALL_LIB_DIR:PATH=${libdir}"
 
 FILES_${PN}-dev += "${libdir}/cmake/*.cmake"
+
+BBCLASSEXTEND = "native"

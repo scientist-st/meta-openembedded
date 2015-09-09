@@ -1,13 +1,13 @@
 require gvfs.inc
 
 DEPENDS = "libsoup-2.4 gnome-keyring glib-2.0 avahi gconf intltool-native"
-# optional: obexftp libcdio libimobiledevice 
+# optional: obexftp libcdio-paranoia libimobiledevice
 
 PR = "${INC_PR}.0"
 
 # in case of gnome-disk-utility was alresdy built: avoid double files
 # afc is enabled when it detects libimobiledevice
-EXTRA_OECONF += "--disable-gdu --disable-afc"
+EXTRA_OECONF += "--disable-gdu --disable-afc --disable-cdda"
 
 PACKAGES =+ "gvfsd-ftp gvfsd-sftp gvfsd-trash"
 
@@ -31,4 +31,3 @@ PACKAGECONFIG[samba] = "--enable-samba --with-samba-includes=${STAGING_INCDIR} \
 PACKAGECONFIG[fuse] = "--enable-fuse, --disable-fuse, fuse"
 PACKAGECONFIG[archive] = "--enable-archive, --disable-archive, libarchive"
 PACKAGECONFIG[obexftp] = "--enable-obexftp, --disable-obexftp, bluez4 expat"
-PACKAGECONFIG[cdda] = "--enable-cdda, --disable-cdda, libcdio"

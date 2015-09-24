@@ -38,14 +38,14 @@ index f25bf8e..306e77d 100644
  	@echo make: creating $@
 -	@test -d $(shell dirname $(top_builddir)/$@) || \
 -	  mkdir $(shell dirname $(top_builddir)/$@)
-+	mkdir $(shell dirname $(top_builddir)/$@)
++	mkdir -p $(shell dirname $(top_builddir)/$@)
  	@$(edit) $< >$(top_builddir)/$@
  
  data/autostart/openbox-autostart: $(top_srcdir)/data/autostart/openbox-autostart.in Makefile
  	@echo make: creating $@
 -	@test -d $(shell dirname $(top_builddir)/$@) || \
 -	  mkdir $(shell dirname $(top_builddir)/$@)
-+	mkdir $(shell dirname $(top_builddir)/$@)
++	mkdir -p $(shell dirname $(top_builddir)/$@)
  	@$(edit) $< >$(top_builddir)/$@
  
  %.desktop: %.desktop.in Makefile

@@ -26,7 +26,7 @@ inherit systemd waf-samba cpan-base perlnative
 # remove default added RDEPENDS on perl
 RDEPENDS_${PN}_remove = "perl"
 
-DEPENDS += "readline virtual/libiconv zlib popt libtalloc libtdb libtevent libldb krb5 ctdb libbsd cyrus-sasl"
+DEPENDS += "readline virtual/libiconv zlib popt libtalloc libtdb libtevent libldb krb5 ctdb libbsd"
 
 
 SYSVINITTYPE_linuxstdbase = "lsb"
@@ -49,10 +49,13 @@ PACKAGECONFIG[lsb] = ",,lsb"
 PACKAGECONFIG[sysv] = ",,sysvinit"
 PACKAGECONFIG[cups] = "--enable-cups,--disable-cups,cups"
 PACKAGECONFIG[ldap] = "--with-ldap,--without-ldap,openldap"
+PACKAGECONFIG[sasl] = ",,cyrus-sasl"
 PACKAGECONFIG[systemd] = "--with-systemd,--without-systemd,systemd"
 PACKAGECONFIG[dmapi] = "--with-dmapi,--without-dmapi,dmapi"
 PACKAGECONFIG[zeroconf] = "--enable-avahi,--disable-avahi,avahi"
 PACKAGECONFIG[valgrind] = ",--without-valgrind,valgrind,"
+
+SRC_URI += "${@bb.utils.contains('PACKAGECONFIG', 'sasl', '', 'file://21-avoid-sasl-unless-wanted.patch', d)}"
 
 SAMBA4_IDMAP_MODULES="idmap_ad,idmap_rid,idmap_adex,idmap_hash,idmap_tdb2"
 SAMBA4_PDB_MODULES="pdb_tdbsam,${@bb.utils.contains('PACKAGECONFIG', 'ldap', 'pdb_ldap,', '', d)}pdb_ads,pdb_smbpasswd,pdb_wbc_sam,pdb_samba4"
@@ -134,7 +137,7 @@ FILES_${PN}-base = "${sbindir}/nmbd \
 FILES_${PN}-ctdb-tests = "${bindir}/ctdb_run_tests \
                           ${libdir}/ctdb-tests \
                           ${datadir}/ctdb-tests \
-                          /run/ctdb \
+                          ${libexecdir}/ctdb \
                          "
 
 # figured out by
@@ -274,7 +277,7 @@ FILES_${PN}-dbg += "${libdir}/samba/idmap/.debug/* \
                     ${libdir}/samba/nss_info/.debug/* \
                     ${libdir}/samba/ldb/.debug/* \
                     ${libdir}/samba/vfs/.debug/* \
-                    ${libdir}/samba/ctdb/.debug/* \
+                    ${libexecdir}/ctdb/.debug/* \
                     ${libdir}/ctdb-tests/.debug/* \
                     ${base_libdir}/security/.debug/pam_smbpass.so \
 "

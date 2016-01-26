@@ -18,3 +18,6 @@ SRC_URI[sha256sum] = "c26dced1b3f4317ecf6af36db0e90294d87e43966d56aecc4e97b65368
 
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11', '', d)}"
 PACKAGECONFIG[x11] = "--with-x11, --without-x11, libxi"
+
+PACKAGE_BEFORE_PN += "${PN}-test"
+FILES_${PN}-test = "${bindir}/grail-test*"

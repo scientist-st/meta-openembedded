@@ -16,3 +16,6 @@ SRC_URI[sha256sum] = "cfb9ab52cdccd926f1822a457264d0014c7eb9f4600a72626063dd073b
 
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11', '', d)}"
 PACKAGECONFIG[x11] = "--enable-x11, --disable-x11, libxi xext virtual/xserver"
+
+PACKAGE_BEFORE_PN += "${PN}-test"
+FILES_${PN}-test = "${bindir}/frame-test*"

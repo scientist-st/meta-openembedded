@@ -106,6 +106,7 @@ EXTRA_OECONF += "--enable-fhs \
                  --with-profiling-data \
                  --with-libiconv=${STAGING_DIR_HOST}${prefix} \
                 "
+DISABLE_STATIC = ""
 
 LDFLAGS += "-Wl,-z,relro,-z,now"
 

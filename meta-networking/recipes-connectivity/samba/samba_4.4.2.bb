@@ -27,7 +27,7 @@ inherit systemd waf-samba cpan-base perlnative
 # remove default added RDEPENDS on perl
 RDEPENDS_${PN}_remove = "perl"
 
-DEPENDS += "readline virtual/libiconv zlib popt libtalloc libtdb libtevent libldb krb5 ctdb libbsd"
+DEPENDS += "readline virtual/libiconv zlib popt libtalloc libtdb libtevent libldb krb5 ctdb libbsd libaio"
 
 
 SYSVINITTYPE_linuxstdbase = "lsb"
@@ -55,6 +55,9 @@ PACKAGECONFIG[systemd] = "--with-systemd,--without-systemd,systemd"
 PACKAGECONFIG[dmapi] = "--with-dmapi,--without-dmapi,dmapi"
 PACKAGECONFIG[zeroconf] = "--enable-avahi,--disable-avahi,avahi"
 PACKAGECONFIG[valgrind] = ",--without-valgrind,valgrind,"
+PACKAGECONFIG[lttng] = "--with-lttng, --without-lttng,lttng-ust"
+PACKAGECONFIG[archive] = "--with-libarchive, --without-libarchive, libarchive"
+
 
 SRC_URI += "${@bb.utils.contains('PACKAGECONFIG', 'sasl', '', 'file://21-avoid-sasl-unless-wanted.patch', d)}"
 

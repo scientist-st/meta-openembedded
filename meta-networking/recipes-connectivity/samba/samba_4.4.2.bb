@@ -116,9 +116,9 @@ do_install_append() {
     rm -rf ${D}/run ${D}${localstatedir}/run
 }
 
-PACKAGES += "${PN}-python ${PN}-python-dbg ${PN}-pidl libwinbind libwinbind-dbg libwinbind-krb5-locator"
+PACKAGES += "${PN}-python ${PN}-python-dbg ${PN}-pidl libwinbind libwinbind-dbg libwinbind-krb5-locator ${PN}-ctdb-tests"
 PACKAGES =+ "libwbclient libnss-winbind winbind winbind-dbg libnetapi libsmbsharemodes \
-             libsmbclient libsmbclient-dev lib${PN}-base ${PN}-base ${PN}-ctdb-tests"
+             libsmbclient libsmbclient-dev lib${PN}-base ${PN}-base"
 
 RDEPENDS_${PN} += "${PN}-base"
 
@@ -274,6 +274,8 @@ FILES_${PN}-dbg += "${libdir}/samba/idmap/.debug/* \
                     ${libdir}/samba/nss_info/.debug/* \
                     ${libdir}/samba/ldb/.debug/* \
                     ${libdir}/samba/vfs/.debug/* \
+                    ${libdir}/samba/ctdb/.debug/* \
+                    ${libdir}/ctdb-tests/.debug/* \
                     ${base_libdir}/security/.debug/pam_smbpass.so \
 "
 

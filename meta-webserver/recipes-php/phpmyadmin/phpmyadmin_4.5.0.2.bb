@@ -7,7 +7,9 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=b234ee4d69f5fce4486a80fdaf4a4263 \
 
 SRC_URI = "https://files.phpmyadmin.net/phpMyAdmin/4.5.0.2/phpMyAdmin-4.5.0.2-all-languages.tar.xz \
            file://Port-content-spoofing-fix-CVE-2015-7873.patch \
-           file://apache.conf"
+           file://apache.conf \
+           file://phpmyadmin-CVE-2015-8669.patch \
+"
 
 SRC_URI[md5sum] = "2d08d2fcc8f70f88a11a14723e3ca275"
 SRC_URI[sha256sum] = "d2e90ea486d90b4ebe5eb02d7ad349ad2916c12a8981f98553395ef78d22a8ec"
@@ -18,7 +20,7 @@ inherit allarch
 
 do_install() {
     install -d ${D}${datadir}/${BPN}
-    cp -a * ${D}${datadir}/${BPN}
+    cp -R --no-dereference --preserve=mode,links -v * ${D}${datadir}/${BPN}
     chown -R root:root ${D}${datadir}/${BPN}
     # Don't install patches to target
     rm -rf ${D}${datadir}/${BPN}/patches

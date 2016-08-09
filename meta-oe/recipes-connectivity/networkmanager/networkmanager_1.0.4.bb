@@ -62,7 +62,6 @@ FILES_${PN} += " \
 
 RRECOMMENDS_${PN} += "iptables dnsmasq"
 RCONFLICTS_${PN} = "connman"
-DREPENDS_${PN} = "libnewt polkit"
 RDEPENDS_${PN} = " \
     wpa-supplicant \
     dhcp-client \

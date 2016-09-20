@@ -35,3 +35,7 @@ do_install_append() {
 }
 
 RRECOMMENDS_${PN} = "pointercal-xinput"
+
+pkg_postinst_${PN} () {
+    chmod 666 /etc/X11/xorg.conf.d/99-*.conf
+}

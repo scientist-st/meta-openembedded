@@ -81,6 +81,10 @@ while [ "$i" -ne "$max" ]; do
 	$BINARY --device "$TOUCHNAME" --no-timeout --output-type xorg.conf.d $CMDOPTION
 	if [ $? = 0 ]; then
 		echo "$0 finished with success"
+		if [ "$EUID" -eq 0 ]; then
+			echo "Set write access for all users on $CALFILE"
+			chmod 666 $CALFILE
+		fi
 		exit 0
 	fi
 	sleep 1

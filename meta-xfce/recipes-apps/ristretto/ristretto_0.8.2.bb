@@ -9,7 +9,7 @@ inherit xfce-app
 
 RRECOMMENDS_${PN} += "tumbler"
 
-SRC_URI[md5sum] = "5332876b627b3237eebb76db66e2fb11"
-SRC_URI[sha256sum] = "0b4c90c585166c958d479075b98da6e28ca500bda6f4d3443f20e0a2172030ee"
+SRC_URI[md5sum] = "a8d8bb6b8fa7f868cfa3ae778630946e"
+SRC_URI[sha256sum] = "f8f3b77ca6fc77ddf8cff1bb52e5c5802c462663f72f324393b3a0360f6901b8"
 
 FILES_${PN} += "${datadir}/appdata"

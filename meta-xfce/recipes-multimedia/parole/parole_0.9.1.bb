@@ -19,10 +19,15 @@ DEPENDS += " \
     taglib \
 "
 
-SRC_URI[md5sum] = "361e3059f1263c76a3711db2c7c1a97b"
-SRC_URI[sha256sum] = "4b216f5200490f8d2a9bf1b3fcd9a8b20834c95249bf13b9170c82e1fcbd80f4"
+SRC_URI[md5sum] = "85d76320726cda93e29e0ea59141c34c"
+SRC_URI[sha256sum] = "a596b0add40294258dcd87b73317273e5060c76c201a0a33e8e78a514a6b4baf"
 
-RDEPENDS_${PN} += "gstreamer1.0-plugins-good"
+RRECOMMENDS_${PN} += " \
+    gstreamer1.0-plugins-base-meta \
+    gstreamer1.0-plugins-good-meta \
+    gstreamer1.0-plugins-bad-meta \
+    gstreamer1.0-plugins-ugly-meta \
+"
 
 EXTRA_OECONF = "--disable-gtk-doc"
 

@@ -15,6 +15,10 @@ INSANE_SKIP_${PN} = "dev-so"
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[gstreamer-thumbnailer] = "--enable-gstreamer-thumbnailer,--disable-gstreamer-thumbnailer,gstreamer1.0 gstreamer1.0-plugins-base"
 
+do_install_appen() {
+    ln -sf tumbler-cache-plugin.so ${D}${libdir}/tumbler-1/plugins/cache/tumbler-xdg-cache.so
+}
+
 FILES_${PN} += "${datadir}/dbus-1/services \
                 ${libdir}/tumbler-1/tumblerd \
                 ${libdir}/tumbler-1/plugins/*.so \

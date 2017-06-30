@@ -1,0 +1,189 @@
+From 5e99c1e0a365d1330f078fd66d4291894b768386 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andreas=20M=C3=BCller?= <schnitzeltony@googlemail.com>
+Date: Fri, 30 Jun 2017 14:36:51 +0200
+Subject: [PATCH] Revert "property-types: remove custom multiline paramspec,
+ ui-meta is used now"
+
+This reverts commit 38e6545f785ba614f07f71a62fc39086dbee5a9c.
+
+Upstream-Status: Pending
+
+Signed-off-by: Andreas Müller <schnitzeltony@googlemail.com>
+---
+ gegl/property-types/gegl-paramspecs.c | 108 ++++++++++++++++++++++++++++++++++
+ gegl/property-types/gegl-paramspecs.h |  40 +++++++++++++
+ 2 files changed, 148 insertions(+)
+
+diff --git a/gegl/property-types/gegl-paramspecs.c b/gegl/property-types/gegl-paramspecs.c
+index de981f9..9e7b88a 100644
+--- a/gegl/property-types/gegl-paramspecs.c
++++ b/gegl/property-types/gegl-paramspecs.c
+@@ -424,6 +424,114 @@ gegl_param_spec_file_path (const gchar *name,
+   return G_PARAM_SPEC (sspec);
+ }
+ 
++
++/*
++ * GEGL_TYPE_PARAM_MULTILINE
++ */
++
++static void       gegl_param_multiline_class_init (GParamSpecClass *klass);
++static void       gegl_param_multiline_init (GParamSpec *pspec);
++static gboolean   gegl_param_multiline_validate (GParamSpec *pspec,
++                                                 GValue     *value);
++
++GType
++gegl_param_multiline_get_type (void)
++{
++  static GType type = 0;
++
++  if (!type)
++    {
++      const GTypeInfo info =
++      {
++        sizeof (GParamSpecClass),
++        NULL,                                             NULL,
++        (GClassInitFunc) gegl_param_multiline_class_init,
++        NULL,                                             NULL,
++        sizeof (GeglParamSpecString),
++        0,
++        (GInstanceInitFunc) gegl_param_multiline_init
++      };
++
++      type = g_type_register_static (G_TYPE_PARAM_STRING,
++                                     "GeglParamMultiline", &info, 0);
++    }
++
++  return type;
++}
++
++static void
++gegl_param_multiline_class_init (GParamSpecClass *klass)
++{
++  klass->value_type     = G_TYPE_STRING;
++  klass->value_validate = gegl_param_multiline_validate;
++}
++
++static void
++gegl_param_multiline_init (GParamSpec *pspec)
++{
++  GeglParamSpecMultiline *sspec = GEGL_PARAM_SPEC_MULTILINE (pspec);
++
++  sspec->no_validate = FALSE;
++  sspec->null_ok     = FALSE;
++}
++
++static gboolean
++gegl_param_multiline_validate (GParamSpec *pspec,
++                               GValue     *value)
++{
++  GeglParamSpecMultiline *sspec     = GEGL_PARAM_SPEC_MULTILINE (pspec);
++  gchar                  *multiline = value->data[0].v_pointer;
++
++  if (multiline)
++    {
++      gchar *s;
++
++      if (!sspec->no_validate &&
++          !g_utf8_validate (multiline, -1, (const gchar **) &s))
++        {
++          for (; *s; s++)
++            if (*s < ' ')
++              *s = '?';
++
++          return TRUE;
++        }
++    }
++  else if (!sspec->null_ok)
++    {
++      value->data[0].v_pointer = g_strdup ("");
++      return TRUE;
++    }
++
++  return FALSE;
++}
++
++GParamSpec *
++gegl_param_spec_multiline (const gchar *name,
++                           const gchar *nick,
++                           const gchar *blurb,
++                           const gchar *default_value,
++                           GParamFlags  flags)
++{
++  GeglParamSpecMultiline *sspec;
++
++  sspec = g_param_spec_internal (GEGL_TYPE_PARAM_MULTILINE,
++                                 name, nick, blurb, flags);
++
++  if (sspec)
++    {
++      g_free (G_PARAM_SPEC_STRING (sspec)->default_value);
++      G_PARAM_SPEC_STRING (sspec)->default_value = g_strdup (default_value);
++/*
++      sspec->no_validate = no_validate ? TRUE : FALSE;
++      sspec->null_ok     = null_ok     ? TRUE : FALSE;*/
++    }
++
++  return G_PARAM_SPEC (sspec);
++}
++
++
++
++
+ /*
+  * GEGL_TYPE_PARAM_ENUM
+  */
+diff --git a/gegl/property-types/gegl-paramspecs.h b/gegl/property-types/gegl-paramspecs.h
+index 5302a95..51ad561 100644
+--- a/gegl/property-types/gegl-paramspecs.h
++++ b/gegl/property-types/gegl-paramspecs.h
+@@ -243,6 +243,46 @@ GParamSpec * gegl_param_spec_file_path (const gchar *name,
+ 
+ 
+ /*
++ * GEGL_TYPE_PARAM_MULTILINE
++ */
++
++#define GEGL_TYPE_PARAM_MULTILINE           (gegl_param_multiline_get_type ())
++#define GEGL_PARAM_SPEC_MULTILINE(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_MULTILINE, GeglParamSpecMultiline))
++#define GEGL_IS_PARAM_SPEC_MULTILINE(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_MULTILINE))
++
++typedef struct _GeglParamSpecMultiline GeglParamSpecMultiline;
++
++struct _GeglParamSpecMultiline
++{
++  GParamSpecString parent_instance;
++
++  guint            no_validate : 1;
++  guint            null_ok     : 1;
++};
++
++GType        gegl_param_multiline_get_type (void) G_GNUC_CONST;
++
++/**
++ * gegl_param_spec_multiline:
++ * @name: canonical name of the property specified
++ * @nick: nick name for the property specified
++ * @blurb: description of the property specified
++ * @default_value: default value for the property specified
++ * @flags: flags for the property specified
++ *
++ * Creates a new #GeglParamSpecMultiline instance.
++ *
++ * Return value: (transfer full): a newly created parameter specification
++ */
++GParamSpec * gegl_param_spec_multiline (const gchar *name,
++                                        const gchar *nick,
++                                        const gchar *blurb,
++                                        const gchar *default_value,
++                                        GParamFlags  flags);
++
++
++
++/*
+  * GEGL_TYPE_PARAM_ENUM
+  */
+ 
+-- 
+2.9.4
+

@@ -7,8 +7,8 @@ DEPENDS = "gtk+ python3-docutils-native"
 inherit autotools pkgconfig perlnative pythonnative
 
 SRC_URI = "http://download.geany.org/${BP}.tar.bz2"
-SRC_URI[md5sum] = "75081b600560c5c8366eda0e1b8cc531"
-SRC_URI[sha256sum] = "0ac360f1f3d6c28790a81d570252a7d40421f6e1d8e5a8d653756bd041d88491"
+SRC_URI[md5sum] = "386000be6b26972c6a699939c37cda34"
+SRC_URI[sha256sum] = "30fdb906bb76c4251a8bcf83ee267db28c26ef6ab867668a782cec1164a3aba5"
 
 FILES_${PN} += "${datadir}/icons"
 

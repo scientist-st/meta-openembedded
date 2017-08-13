@@ -10,8 +10,8 @@ SRC_URI = " \
     file://org.yoctoproject.pkexec.run-gparted.policy \
     file://gparted_polkit \
 "
-SRC_URI[md5sum] = "ab72464a3ab2137664d9df8462befd3f"
-SRC_URI[sha256sum] = "76891f14394754f7d6ecceba2af0e585bf89f9d780c389a255dcd41a2f45d333"
+SRC_URI[md5sum] = "e29cb2061da59c6a279d9d294cf2a343"
+SRC_URI[sha256sum] = "2250bf6bb43687be149c2a95fbfe2f6f0215690e187179d5f733ae518fa7c3cd"
 
 DEPENDS = "glib-2.0 glib-2.0-native gtkmm parted gnome-doc-utils intltool-native"
 

@@ -30,12 +30,14 @@ do_install_append() {
         install -d ${D}${bindir}
         install -m 0755 ${WORKDIR}/xinput_calibrator_pointercal2.sh ${D}${bindir}/xinput_calibrator_pointercal2.sh
         install -d ${D}/${sysconfdir}/X11/xorg.conf.d
-	sed -i 	's,xinput_calibrator;,xinput_calibrator_pointercal2.sh;,g' \
+        sed -i 's,xinput_calibrator;,xinput_calibrator_pointercal2.sh;,g' \
 		${D}${datadir}/applications/xinput_calibrator.desktop
 }
 
 RRECOMMENDS_${PN} = "pointercal-xinput"
 
 pkg_postinst_${PN} () {
-    chmod 666 /etc/X11/xorg.conf.d/99-*.conf
+    for calfile in `find /etc/X11/xorg.conf.d -name '99-*.conf'` ; do
+        chmod 666 $calfile
+    done
 }

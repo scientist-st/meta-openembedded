@@ -7,8 +7,8 @@ SRC_URI = " \
     http://www.fftw.org/fftw-${PV}.tar.gz \
     file://0001-NEON-autodetection-segfaults-assume-neon-present.patch \
 "
-SRC_URI[md5sum] = "6cc08a3b9c7ee06fdd5b9eb02e06f569"
-SRC_URI[sha256sum] = "8ecfe1b04732ec3f5b7d279fdb8efcad536d555f9d1e8fabd027037d45ea8bcf"
+SRC_URI[md5sum] = "0d5915d7d39b3253c1cc05030d79ac47"
+SRC_URI[sha256sum] = "3b609b7feba5230e8f6dd8d245ddbefac324c5a6ae4186947670d9ac2cd25573"
 
 inherit autotools pkgconfig
 
@@ -72,6 +72,7 @@ FILES_fftwl-wisdom = "${bindir}/fftwl-wisdom"
 FILES_fftwf-wisdom = "${bindir}/fftwf-wisdom"
 FILES_fftw-wisdom-to-conf = "${bindir}/fftw-wisdom-to-conf"
 
-RDEPENDS_${PN}-dev = ""
+FILES_${PN}-dev += "${libdir}/cmake"
+RDEPENDS_${PN}-dev = "libfftw libfftw libfftwf"
 
 BBCLASSEXTEND = "native"

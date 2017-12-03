@@ -12,6 +12,10 @@ EXTRA_OECMAKE = " \
     -DFLTK_CONFIG_PATH=${libdir}/cmake \
 "
 
+# for sake of other packages linking against fltk libs
+CFLAGS += "-fPIC"
+CXXFLAGS += "-fPIC"
+
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'opengl', '', d)}"
 
 PACKAGECONFIG[examples] = "-DOPTION_BUILD_EXAMPLES=ON,-DOPTION_BUILD_EXAMPLES=OFF,"

@@ -10,12 +10,9 @@ inherit distutils3 gtk-icon-cache
 
 SRC_URI = " \
     https://launchpad.net/menulibre/2.1/${PV}/+download/${PN}-${PV}.tar.gz \
-    file://0001-add_launcher-Exit-early-if-no-row-is-selected.patch \
-    file://0002-setup.py-avoid-usr-share-share-paths.patch \
-    file://0003-MenulibreXdg.py-fix-loading-of-desktop-files.patch \
 "
-SRC_URI[md5sum] = "19d9d3337322eb5513454bb8cdfb739b"
-SRC_URI[sha256sum] = "bdd69740119902f1b1f8c7831155f4428403792a0a6c4287bcbb395c4e71fb31"
+SRC_URI[md5sum] = "0e30f24f544f0929621046d17874ecf0"
+SRC_URI[sha256sum] = "36a6350019e45fbd1219c19a9afce29281e806993d4911b45b371dac50064284"
 
 do_install_append() {
     sed -i 's:${D}::g' ${D}${datadir}/applications/menulibre.desktop
